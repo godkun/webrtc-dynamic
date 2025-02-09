@@ -1,0 +1,37 @@
+# Go
+/backend/vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# Node
+/tests/node_modules/
+/tests/package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Playwright
+/tests/test-results/
+/tests/playwright-report/
+/tests/playwright/.cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local

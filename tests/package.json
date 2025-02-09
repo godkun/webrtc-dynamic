@@ -1,0 +1,11 @@
+{
+  "name": "webrtc-dynamic-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for WebRTC dynamic sender/receiver",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.41.1"
+  }
+}
