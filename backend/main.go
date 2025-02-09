@@ -32,12 +32,12 @@ type PeerConnection struct {
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Failed to upgrade connection: %v", err)
+		log.Printf("连接升级失败: %v", err)
 		return
 	}
 	defer conn.Close()
 
-	// Create a new WebRTC configuration
+	// 创建新的 WebRTC 配置
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
@@ -46,15 +46,15 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	// Create a new RTCPeerConnection
+	// 创建新的 RTCPeerConnection
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
-		log.Printf("Failed to create peer connection: %v", err)
+		log.Printf("创建点对点连接失败: %v", err)
 		return
 	}
 	defer peerConnection.Close()
 
-	// Set up handlers for peer connection events
+	// 设置点对点连接事件处理器
 	peerConnection.OnICECandidate(func(ice *webrtc.ICECandidate) {
 		if ice == nil {
 			return
@@ -67,20 +67,20 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := conn.WriteJSON(message); err != nil {
-			log.Printf("Failed to send ICE candidate: %v", err)
+			log.Printf("发送 ICE candidate 失败: %v", err)
 		}
 	})
 
 	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-		log.Printf("New track received: %s", track.Kind().String())
+		log.Printf("收到新的媒体轨道: %s", track.Kind().String())
 	})
 
-	// Handle WebSocket messages
+	// 处理 WebSocket 消息
 	for {
 		var message WebSocketMessage
 		err := conn.ReadJSON(&message)
 		if err != nil {
-			log.Printf("Failed to read message: %v", err)
+			log.Printf("读取消息失败: %v", err)
 			break
 		}
 
@@ -88,19 +88,19 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		case "offer":
 			err = peerConnection.SetRemoteDescription(message.SDP)
 			if err != nil {
-				log.Printf("Failed to set remote description: %v", err)
+				log.Printf("设置远程描述失败: %v", err)
 				continue
 			}
 
 			answer, err := peerConnection.CreateAnswer(nil)
 			if err != nil {
-				log.Printf("Failed to create answer: %v", err)
+				log.Printf("创建应答失败: %v", err)
 				continue
 			}
 
 			err = peerConnection.SetLocalDescription(answer)
 			if err != nil {
-				log.Printf("Failed to set local description: %v", err)
+				log.Printf("设置本地描述失败: %v", err)
 				continue
 			}
 
@@ -110,29 +110,29 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if err := conn.WriteJSON(response); err != nil {
-				log.Printf("Failed to send answer: %v", err)
+				log.Printf("发送应答失败: %v", err)
 			}
 
 		case "ice-candidate":
 			if err := peerConnection.AddICECandidate(message.Candidate); err != nil {
-				log.Printf("Failed to add ICE candidate: %v", err)
+				log.Printf("添加 ICE candidate 失败: %v", err)
 			}
 
 		case "track-added":
-			log.Printf("Client added new track of kind: %s", message.Kind)
+			log.Printf("客户端添加了新的媒体轨道类型: %s", message.Kind)
 		}
 	}
 }
 
 func main() {
-	// Serve static files
+	// 提供静态文件服务
 	fs := http.FileServer(http.Dir("../frontend"))
 	http.Handle("/", fs)
 
-	// WebSocket endpoint
+	// WebSocket 端点
 	http.HandleFunc("/ws", handleWebSocket)
 
-	log.Println("Server starting on :8080")
+	log.Println("服务器启动在端口 :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}

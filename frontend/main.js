@@ -4,7 +4,7 @@ const configuration = {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] 
 };
 
-// WebSocket setup
+// WebSocket 设置
 function connectWebSocket() {
     ws = new WebSocket('ws://localhost:8080/ws');
     
@@ -26,7 +26,7 @@ function connectWebSocket() {
     };
 }
 
-// PeerConnection setup and management
+// PeerConnection 设置和管理
 async function setupPeerConnection() {
     peerConnection = new RTCPeerConnection(configuration);
     
@@ -53,7 +53,7 @@ async function setupPeerConnection() {
     };
 }
 
-// Handle incoming offers
+// 处理接收到的 offer
 async function handleOffer(sdp) {
     try {
         await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -69,7 +69,7 @@ async function handleOffer(sdp) {
     }
 }
 
-// Handle incoming ICE candidates
+// 处理接收到的 ICE candidate
 async function handleIceCandidate(candidate) {
     try {
         if (candidate) {
@@ -80,7 +80,7 @@ async function handleIceCandidate(candidate) {
     }
 }
 
-// Media stream handling
+// 媒体流处理
 async function startStreaming() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -99,7 +99,7 @@ async function startStreaming() {
     }
 }
 
-// Add new video track
+// 添加新的视频轨道
 async function addVideoTrack() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -115,7 +115,7 @@ async function addVideoTrack() {
     }
 }
 
-// Add new audio track
+// 添加新的音频轨道
 async function addAudioTrack() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -131,7 +131,7 @@ async function addAudioTrack() {
     }
 }
 
-// Event listeners
+// 事件监听器
 document.getElementById('startBtn').addEventListener('click', async () => {
     await setupPeerConnection();
     connectWebSocket();
