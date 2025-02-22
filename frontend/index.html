@@ -18,6 +18,35 @@
             height: 240px;
             border: 1px solid #ccc;
         }
+        .tracks-panel {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .track-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .track-info {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .delete-track-btn {
+            padding: 2px 8px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .delete-track-btn:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
 <body>
@@ -31,6 +60,12 @@
         <button id="startBtn">Start Streaming</button>
         <button id="addVideoBtn">Add Video Track</button>
         <button id="addAudioBtn">Add Audio Track</button>
+        <!-- <button id="removeVideoBtn">Remove All Video Tracks</button> -->
+        <!-- <button id="removeAudioBtn">Remove All Audio Tracks</button> -->
+    </div>
+    <div class="tracks-panel">
+        <h3>当前轨道</h3>
+        <div id="tracksContainer"></div>
     </div>
     <script src="main.js"></script>
 </body>

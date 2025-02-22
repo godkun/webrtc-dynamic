@@ -72,7 +72,11 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	})
 
 	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-		log.Printf("收到新的媒体轨道: %s", track.Kind().String())
+		log.Printf("收到新的媒体轨道: %s, ID: %s, Label: %s, StreamID: %s",
+			track.Kind().String(),
+			track.ID(),
+			track.StreamID(),
+			track.RID())
 	})
 
 	// 处理 WebSocket 消息
@@ -120,6 +124,31 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		case "track-added":
 			log.Printf("客户端添加了新的媒体轨道类型: %s", message.Kind)
+
+		case "track-removed":
+			log.Printf("客户端移除了媒体轨道类型: %s", message.Kind)
+			// 打印当前剩余的轨道数量
+			receivers := peerConnection.GetReceivers()
+			activeReceivers := 0
+			for _, receiver := range receivers {
+				if receiver.Track() != nil {
+					activeReceivers++
+				}
+			}
+			log.Printf("当前剩余轨道数量: %d", activeReceivers)
+			// 按类型统计剩余轨道
+			videoTracks := 0
+			audioTracks := 0
+			for _, receiver := range receivers {
+				if receiver.Track() != nil {
+					if receiver.Track().Kind() == webrtc.RTPCodecTypeVideo {
+						videoTracks++
+					} else if receiver.Track().Kind() == webrtc.RTPCodecTypeAudio {
+						audioTracks++
+					}
+				}
+			}
+			log.Printf("剩余视频轨道: %d, 音频轨道: %d", videoTracks, audioTracks)
 		}
 	}
 }
